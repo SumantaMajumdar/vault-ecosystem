@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vault Companion"
+            android:textColor="#F8FAFC"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gentoo Server Helper"
+            android:textColor="#94A3B8"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Server IP Settings Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#1E293B"
+            android:padding="16dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SERVER IP CONFIGURATION"
+                android:textColor="#38BDF8"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edit_server_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g. 192.168.1.153"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#64748B"
+                android:background="#0F172A"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:inputType="textUri" />
+
+            <Button
+                android:id="@+id/btn_save_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save IP Address"
+                android:backgroundTint="#0284C7"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
+
+        <!-- Features summary -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#1E293B"
+            android:padding="16dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FEATURES ACTIVATED"
+                android:textColor="#4ADE80"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="✔ Share to YouTube Queue (from YouTube app/browser)\n✔ Add Magnet Links to qBittorrent on Server\n✔ Home Screen Music Control Widget\n✔ SMB / NAS Mount helper"
+                android:textColor="#CBD5E1"
+                android:textSize="14sp"
+                android:lineSpacingExtra="6dp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Quick actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#1E293B"
+            android:padding="16dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QUICK LINKS &amp; NAS"
+                android:textColor="#F59E0B"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_open_jukebox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open Web Jukebox"
+                android:backgroundTint="#334155"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btn_open_qbittorrent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open VaultDownloader Web UI"
+                android:backgroundTint="#334155"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btn_open_nas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Access / Mount NAS (SMB)"
+                android:backgroundTint="#334155"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

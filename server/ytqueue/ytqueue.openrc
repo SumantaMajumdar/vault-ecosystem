@@ -1,0 +1,14 @@
+#!/sbin/openrc-run
+
+name="ytqueue"
+description="Web-based YouTube queue receiver for simultaneous audio output"
+
+command="/usr/bin/python3"
+command_args="/home/SM/ytqueue/server.py"
+command_user="SM"
+command_background="yes"
+pidfile="/run/ytqueue.pid"
+
+depend() {
+    need net
+}

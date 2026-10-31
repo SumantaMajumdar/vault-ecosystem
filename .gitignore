@@ -1,0 +1,13 @@
+*.log
+*.tmp
+*.class
+classes/
+gen/
+classes.dex
+base.apk
+unaligned.apk
+aligned.apk
+debug.keystore
+*.idsig
+__pycache__/
+*.pyc

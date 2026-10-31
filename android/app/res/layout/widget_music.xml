@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#DD111827"
+    android:padding="10dp"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vault Jukebox"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="marquee" />
+
+        <TextView
+            android:id="@+id/widget_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap to refresh"
+            android:textColor="#9CA3AF"
+            android:textSize="11sp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Controls -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Vol Down -->
+        <Button
+            android:id="@+id/btn_widget_voldown"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="-"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:background="#33374151" />
+
+        <!-- Play/Pause -->
+        <Button
+            android:id="@+id/btn_widget_playpause"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:text="▶"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:background="#EF4444"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp" />
+
+        <!-- Next -->
+        <Button
+            android:id="@+id/btn_widget_next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="⏭"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="#33374151" />
+
+        <!-- Vol Up -->
+        <Button
+            android:id="@+id/btn_widget_volup"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="+"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:background="#33374151"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import socket
@@ -52,7 +52,7 @@ def ensure_mpv_running():
         "--idle=yes",
         f"--input-ipc-server={MPV_SOCKET}",
         "--no-video",
-        "--ao=pipewire",
+        "--ao=pulse",
         "--ytdl-format=bestaudio/best",
         "--keep-open=no",
         f"--volume={DEFAULT_VOLUME}"
@@ -60,7 +60,6 @@ def ensure_mpv_running():
     env = os.environ.copy()
     env["XDG_RUNTIME_DIR"] = "/run/user/1000"
     env["PULSE_SERVER"] = "unix:/run/user/1000/pulse/native"
-    env["PULSE_SINK"] = "simultaneous_output"
     mpv_process = subprocess.Popen(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
     # Wait up to 1.5s for mpv IPC socket to be ready
@@ -126,6 +125,59 @@ def get_mpv_prop(prop):
         return res.get("data")
     return None
 
+KNOWN_SINKS = [
+    {
+        "id": "dual_speaker_headphones",
+        "name": "Dual Output (Speakers + 3.5mm Jack)",
+        "icon": "🔊🎧"
+    },
+    {
+        "id": "alsa_output.platform-avs_max98357a.18.auto.stereo-fallback",
+        "name": "Internal Speakers (MAX98357A)",
+        "icon": "🔊"
+    },
+    {
+        "id": "alsa_output.platform-avs_da7219.19.auto.stereo-fallback",
+        "name": "Headphones / 3.5mm Jack (DA7219)",
+        "icon": "🎧"
+    },
+    {
+        "id": "alsa_output.platform-avs_hdaudio.20.auto.stereo-fallback",
+        "name": "HDMI Audio Output",
+        "icon": "📺"
+    }
+]
+
+def get_current_sink():
+    env = os.environ.copy()
+    env["XDG_RUNTIME_DIR"] = "/run/user/1000"
+    env["PULSE_SERVER"] = "unix:/run/user/1000/pulse/native"
+    try:
+        res = subprocess.run(["/usr/bin/pactl", "get-default-sink"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=2, env=env)
+        if res.returncode == 0:
+            return res.stdout.strip()
+    except Exception:
+        pass
+    return "dual_speaker_headphones"
+
+def set_current_sink(sink_id):
+    env = os.environ.copy()
+    env["XDG_RUNTIME_DIR"] = "/run/user/1000"
+    env["PULSE_SERVER"] = "unix:/run/user/1000/pulse/native"
+    try:
+        subprocess.run(["/usr/bin/pactl", "set-default-sink", sink_id], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env, timeout=2)
+        # Move all currently active playing sink-inputs to the new sink immediately
+        list_res = subprocess.run(["/usr/bin/pactl", "list", "sink-inputs", "short"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, env=env, timeout=2)
+        if list_res.returncode == 0:
+            for line in list_res.stdout.splitlines():
+                parts = line.strip().split()
+                if parts:
+                    inp_id = parts[0]
+                    subprocess.run(["/usr/bin/pactl", "move-sink-input", inp_id, sink_id], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env, timeout=2)
+        return True
+    except Exception:
+        return False
+
 def update_status_cache():
     global cached_status, last_status_poll, current_track
     now = time.time()
@@ -133,6 +185,7 @@ def update_status_cache():
         return cached_status
 
     last_status_poll = now
+    curr_sink = get_current_sink()
     with lock:
         has_current = current_track is not None
         has_queue = len(queue) > 0
@@ -144,11 +197,13 @@ def update_status_cache():
                 "paused": False,
                 "time_pos": 0,
                 "duration": 0,
-                "volume": cached_status.get("volume", 100),
+                "volume": cached_status.get("volume", 30),
                 "title": "Nothing Playing",
                 "artist": "",
                 "art": None,
-                "queue": []
+                "queue": [],
+                "active_sink": curr_sink,
+                "sinks": KNOWN_SINKS
             }
         return cached_status
 
@@ -184,7 +239,9 @@ def update_status_cache():
             "title": display_title,
             "artist": display_artist,
             "art": display_art,
-            "queue": q_copy
+            "queue": q_copy,
+            "active_sink": curr_sink,
+            "sinks": KNOWN_SINKS
         }
     return cached_status
 
@@ -421,6 +478,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     with lock:
                         if 0 <= idx < len(queue):
                             queue.pop(idx)
+            elif action == "set_sink":
+                if val is not None:
+                    set_current_sink(str(val))
+                    global last_status_poll
+                    last_status_poll = 0
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json")

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -71,16 +71,33 @@
       box-shadow: 0 0 15px var(--accent-glow);
     }
 
-    .status-badge {
-      font-size: 0.75rem;
-      padding: 4px 10px;
+    .output-selector-wrapper {
+      position: relative;
+    }
+
+    .sink-select {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 6px 12px;
       border-radius: 20px;
-      background: rgba(34, 197, 94, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      background: rgba(30, 41, 59, 0.7);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      outline: none;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .sink-select:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .sink-select option {
+      background: #0f172a;
+      color: #f8fafc;
     }
 
     .status-dot {
@@ -438,9 +455,13 @@
         <span class="logo-badge">VAULT</span>
         <span>Jukebox</span>
       </div>
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        <span>Dual Speakers</span>
+      <div class="output-selector-wrapper">
+        <select id="sinkSelector" class="sink-select" onchange="changeOutput(this.value)">
+          <option value="dual_speaker_headphones">🔊🎧 Dual Output</option>
+          <option value="alsa_output.platform-avs_max98357a.18.auto.stereo-fallback">🔊 Speakers</option>
+          <option value="alsa_output.platform-avs_da7219.19.auto.stereo-fallback">🎧 Headphones (3.5mm)</option>
+          <option value="alsa_output.platform-avs_hdaudio.20.auto.stereo-fallback">📺 HDMI</option>
+        </select>
       </div>
     </header>
 
@@ -557,11 +578,21 @@
           document.getElementById('volVal').textContent = `${Math.round(clampedVol)}%`;
         }
 
+        // Active Audio Output Sink
+        const sinkSelect = document.getElementById('sinkSelector');
+        if (sinkSelect && data.active_sink && !sinkSelect.matches(':focus')) {
+          sinkSelect.value = data.active_sink;
+        }
+
         // Queue
         renderQueue(data.queue || []);
       } catch (e) {
         console.error("Status fetch error", e);
       }
+    }
+
+    async function changeOutput(sinkId) {
+      await cmd('set_sink', sinkId);
     }
 
     function renderQueue(queue) {
